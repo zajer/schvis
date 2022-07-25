@@ -98,3 +98,15 @@ describe('applyRoleFun', () => {
 		expect( this.obj1.attributes.get(this.outputAttribute) ).equal(210);
 	});
 })
+
+
+describe('performActRole', () => { 
+	it('should apply all role functions associated with ongoing activity', () => { 
+		throw "not implemented yet";
+		//sprawdzić, czy tylko funkcje określone jako ongoing są wywoływane
+	});
+	it('should apply all role functions associated with finished activity', () => { 
+		throw "not implemented yet";
+		//sprawdzić, czy tylko funkcje określone jako finished są wywoływane
+	});
+});

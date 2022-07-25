@@ -138,7 +138,30 @@ function applyRoleFun (modifiedObj, appliedFun, allRoles) {
 	}
 }
 
+function performActRole(performedRole, allRoles, parentActivityStatus) {
+	let roleFunctionsToApply;
+	if (parentActivityStatus == SimActivityStatus.Started)
+		roleFunctionsToApply = performedRole.ongoingMod;
+	else
+		roleFunctionsToApply = performedRole.finishedMod;
+	
+	roleFunctionsToApply.forEach( (appliedRoleFun) => {
+			applyRoleFun( performed.obj, appliedRoleFun, allRoles);
+		});
+}
+
+function performActRoles(activity){
+	activity.roles.forEach( (role) => { 
+		performActRole(role, activity.roles, activity.status);
+	});
+}
+
 function startActivity (activity) {
 	activity.status = SimActivityStatus.Started;
-	activity.roles.forEach( (role) => { role.ongoingMod } )
+	performActRoles(activity);
+}
+
+function finishActivity (activity) {
+	activity.status = SimActivityStatus.Finished;
+	performActivityRoles(activity);
 }
