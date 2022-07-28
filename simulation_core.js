@@ -163,5 +163,5 @@ function startActivity (activity) {
 
 function finishActivity (activity) {
 	activity.status = SimActivityStatus.Finished;
-	performActivityRoles(activity);
+	performActRoles(activity);
 }
