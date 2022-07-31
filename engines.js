@@ -25,9 +25,6 @@ function switchToTransitionalAnimationsInAllAnimators (callMeWhenItsDone) {
 	return Promise.all( pendingTransitions ).then( () => { 
 			callMeWhenItsDone();
 		});
-	
-	//await Promise.all( pendingTransitions );
-	//return callMeWhenItsDone();
 }
 
 var animEngine = {
