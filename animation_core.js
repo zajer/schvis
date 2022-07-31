@@ -42,7 +42,7 @@ function Animator(canvas,animatedObj,availDrawers){ //one for each object
 			if (areDrawersInTrans)
 				callMeWhenAllDrawersAreInTrans();
 			else
-				setTimeout( loopWithSleepFun, 100);
+				setTimeout( loopWithSleepFun, 20);
 		};
 		this.areTransAnimsRequested = true;
 		loopWithSleepFun();

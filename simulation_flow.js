@@ -49,7 +49,7 @@ function progressSimByAct(simulation){
 	//simulation.state = SimStateStatus.Set;
 }
 
-async function progressSimByMoment(simulation, canFinishStartedActsPromise){
+async function progressSimByMoment(simulation, callMeAndWaitBeforeFinishingActs){
 	let firstFutureActivity = simulation.scheduledActivities.findIndex ( (act) => { return act.start > simulation.time; });
 	
 	if (firstFutureActivity == -1) // no activities scheduled for neither now nor later = no more activities
@@ -61,9 +61,9 @@ async function progressSimByMoment(simulation, canFinishStartedActsPromise){
 		simulation.scheduledActivities.splice (0, firstFutureActivity);
 		currentActivities.forEach( (act) => { startActivity(act); } );
 		simulation.ongoingActivities = simulation.ongoingActivities.concat(currentActivities);
-		simulation.state = SimStateStatus.Set;
+		simulation.state = SimStateStatus.Set; //przeniesc zmiane statusu symulacji do funkcji wyższego rzędu
 		
-		await canFinishStartedActsPromise();
+		await callMeAndWaitBeforeFinishingActs();
 		
 		finishAllActsEndingAtCurrentTime(simulation);
 	}
