@@ -1,13 +1,13 @@
-const SimStateStatus = {
+const SimState = {
 	Set: 0,
 	UnsetNotChanged:1,
 	UnsetChanging: 2
 }
 
-function Simulation(){
-	this.state = SimStateStatus.UnsetChanging;
+function Simulation(scheduledActivities){
+	this.state = SimState.UnsetChanging;
 	this.time = 0;
-	this.scheduledActivities = []; //sorted by start time ascending
+	this.scheduledActivities = scheduledActivities; //sorted by start time ascending
 	this.ongoingActivities = []; //unsorted or in order they were started (might be some gaps since finshed activites are removed)
 	this.finishedActivities = []; //in order they were added
 }
@@ -28,17 +28,17 @@ function finishAllActsEndingAtCurrentTime(simulation){
 }
 
 function progressSimByAct(simulation){
-	//simulation.state = SimStateStatus.UnsetChanging;
+	//simulation.state = SimState.UnsetChanging;
 	let activityToStart = simulation.scheduledActivities.shift();
 	if (activityToStart == undefined) {
 		//no more scheduled activities
-		finishAllActsEndingAtTime(simulation);
+		finishAllActsEndingAtCurrentTime(simulation);
 		simulation.time++;
 	}
 	else if (activityToStart.start > simulation.time) {
 		//first scheduled activity starts after the current moment
 		simulation.scheduled.unshift(activityToStart);
-		finishAllActsEndingAtTime(simulation);
+		finishAllActsEndingAtCurrentTime(simulation);
 		simulation.time++;
 	}
 	else {
@@ -46,7 +46,7 @@ function progressSimByAct(simulation){
 		startActivity(activityToStart);
 		simulation.ongoingActivities.push(activityToStart);
 	}
-	//simulation.state = SimStateStatus.Set;
+	//simulation.state = SimState.Set;
 }
 
 async function progressSimByMoment(simulation, callMeAndWaitBeforeFinishingActs){
@@ -61,7 +61,7 @@ async function progressSimByMoment(simulation, callMeAndWaitBeforeFinishingActs)
 		simulation.scheduledActivities.splice (0, firstFutureActivity);
 		currentActivities.forEach( (act) => { startActivity(act); } );
 		simulation.ongoingActivities = simulation.ongoingActivities.concat(currentActivities);
-		simulation.state = SimStateStatus.Set; //przeniesc zmiane statusu symulacji do funkcji wyższego rzędu
+		simulation.state = SimState.Set; //przeniesc zmiane statusu symulacji do funkcji wyższego rzędu
 		
 		await callMeAndWaitBeforeFinishingActs();
 		
