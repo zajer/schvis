@@ -34,7 +34,7 @@ function SimRoleFun (outputAttributeName, impactfulRoleId, impactfulAttributes, 
 /*
 var roleModifier = [ rolePartFun1, rolePartFun2, ...];
 */
-
+//Roles are numbered from 0
 function SimActAbstRole(roleId,ongoingActivityModifier,finishedActivityModifier) {
 	(function () {
 		let areRoleModifiersValid = ongoingActivityModifier.every ( (element) => { 
@@ -114,11 +114,11 @@ function SimActivity(abstAct, rolesToObj, startTime) {
 		return abstAct.roles.map( (abstRole, idx) => { 
 				if ( ! rolesToObj[idx] instanceof SimObject )
 					throw "rolesToObj array must contain objects of type SimObject";
-			return SimActRole(abstRole, rolesToObj[idx]); } ) 
+			return new SimActRole(abstRole, rolesToObj[idx]); } ) 
 	}) (),
 	this.type = abstAct.type;
-	this.start = startT;
-	this.end = startT + abstAct.duration;
+	this.start = startTime;
+	this.end = startTime + abstAct.duration;
 	this.status = SimActivityStatus.NotStarted;
 }
 
@@ -146,7 +146,7 @@ function performActRole(performedRole, allRoles, parentActivityStatus) {
 		roleFunctionsToApply = performedRole.finishedMod;
 	
 	roleFunctionsToApply.forEach( (appliedRoleFun) => {
-			applyRoleFun( performed.obj, appliedRoleFun, allRoles);
+			applyRoleFun( performedRole.obj, appliedRoleFun, allRoles);
 		});
 }
 

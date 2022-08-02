@@ -37,7 +37,7 @@ function progressSimByAct(simulation){
 	}
 	else if (activityToStart.start > simulation.time) {
 		//first scheduled activity starts after the current moment
-		simulation.scheduled.unshift(activityToStart);
+		simulation.scheduledActivities.unshift(activityToStart);
 		finishAllActsEndingAtCurrentTime(simulation);
 		simulation.time++;
 	}
