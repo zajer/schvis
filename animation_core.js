@@ -22,18 +22,18 @@ function Animator(canvas,animatedObj,availDrawers){ //one for each object
 	//Funkcja będąca argumentem 'requestAnimationFrame' - zbędne bo funkcją tą będzie jakaś metoda silnika animacji, a nie animatora
 	//Funkcja używana przez silnik do zgłoszenia, że zmieniany będzie stan symulacji. Jej celem jest wymuszenie na wszystkich animatorach aby dokończyli animacje dynamiczne. Po zakończeniu każdy animator zgłasza to silnikowi animacji i przechodzi na animację przejściową. Jak wszyscy przejdą na animacje przejściowe to stan symulacji może zostać zmieniony. - też zbędne bo silnik symulacji zgłaszać będzie do silnika animacji, a ten z kolei zgłosi wszystkim animatorom
 	//Tutaj możnaby użyć asynchronicznej funkcji. Po przejściu wszystkich rysowników na animacje przejściowe można wywołać callback z funkcją przekazaną przez silnik animacji - callback animatora oznaczałby w silniku, że dany animator wykonuje już tylko animacje przejściowe. Kiedy wszyscy animatorzy dokonają takiego zgłoszenia to może nastąpić zgłoszenie silnikowi symulacji (!), że możliwa jest zmiana jej stanu.
-	this.ctx = canvas;
+	this.canvas = canvas; //it is a html element obtained with getElementById
 	this.obj = animatedObj;
 	this.drawers = availDrawers;
 	this.drawersStat = ( () => { return new Array(availDrawers.length).fill(AnimationStatus.Going); }) ();
 	this.areTransAnimsRequested = false;
-	this.animate = function () {
-		let objAttrs = obj.attributes;
+	this.drawPartOfAFrame = function () {
+		let objAttrs = this.obj.attributes;
 		this.drawers.forEach( (drawer,idx) => {
-			if (areTransAnimsRequested && drawersStat[idx] == AnimationStatus.Finished)
-				drawers[idx].transAnim(ctx,objAttrs);
+			if (this.areTransAnimsRequested && this.drawersStat[idx] == AnimationStatus.Finished)
+				this.drawers[idx].transAnim(this.canvas,objAttrs);
 			else
-				drawersStat[idx] = drawers[idx].dynamicAnim(ctx,objAttrs);
+				this.drawersStat[idx] = this.drawers[idx].dynamicAnim(this.canvas,objAttrs);
 		});
 	};
 	this.requestTransAnims = function (callMeWhenAllDrawersAreInTrans) {
