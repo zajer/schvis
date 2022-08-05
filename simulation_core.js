@@ -118,7 +118,7 @@ function SimActivity(abstAct, rolesToObj, startTime) {
 	}) (),
 	this.type = abstAct.type;
 	this.start = startTime;
-	this.end = startTime + abstAct.duration;
+	this.end = (() => { return (abstAct.duration > 0) ? (startTime + abstAct.duration - 1) : (startTime + abstAct.duration); }) (); // activities that take 0 time are treated the same as those that take 1 unit of time to complete
 	this.status = SimActivityStatus.NotStarted;
 }
 
