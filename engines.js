@@ -102,13 +102,6 @@ const animEngine = {
 		});
 		workingAnimators.forEach( animator => { animator.drawPartOfAFrame(); } );
 		
-		let timeIndicatorCanvas = document.getElementById("time-indicator");
-		let timeCtx = timeIndicatorCanvas.getContext("2d");
-		timeCtx.clearRect(0, 0, 300, 100);
-		timeCtx.font = "30px Arial";
-		timeCtx.strokeStyle = "blue";
-		timeCtx.strokeText("Current time: "+ simulation.time, 10, 30);
-		
 		window.requestAnimationFrame(animEngine.animate);
 	}
 };

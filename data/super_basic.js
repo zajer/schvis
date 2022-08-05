@@ -141,12 +141,34 @@ let moveDrawerCircles = new Drawer(() => { return AnimationStatus.Finished; }, d
 
 let simCanvasWrapper = document.getElementById("sim-canvas-wrapper");
 let simCanvas = document.getElementById("simulation");
-const usedCanvas = [ {wrapper:simCanvasWrapper, canvas: simCanvas} ];
+
+let drawerFunSimTime = canvas => {
+	let timeCtx = canvas.getContext("2d");
+	timeCtx.save();
+	timeCtx.font = "30px Arial";
+	timeCtx.strokeStyle = "blue";
+	timeCtx.strokeText("Current time: "+ simulation.time, 10, 30);
+	timeCtx.restore();
+	return AnimationStatus.Finished;
+}
+
+let timeDrawer = new Drawer( drawerFunSimTime, drawerFunSimTime );
+
+let timeCanvasWrapper = document.getElementById("time-indicator-canvas-wrapper");
+let timeCanvas = document.getElementById("time-indicator");
+
+const usedCanvas = 
+	[ 
+		{wrapper:simCanvasWrapper, canvas: simCanvas}, 
+		{wrapper:timeCanvasWrapper, canvas: timeCanvas} 
+	];
 let area1Anim = new Animator(simCanvas,simObj2,[moveDrawerSquares]);
 let area2Anim = new Animator(simCanvas,simObj3,[moveDrawerSquares]);
 let area3Anim = new Animator(simCanvas,simObj4,[moveDrawerSquares]);
 let circleAnim = new Animator(simCanvas,simObj1,[moveDrawerCircles]);
 
+let timeAnim = new Animator(timeCanvas,{attributes: new Map()},[ timeDrawer ]);
+
 let allPlannedActivities = [a1,a2,a3];
-const workingAnimators = [area1Anim,area2Anim,area3Anim,circleAnim];
+const workingAnimators = [area1Anim,area2Anim,area3Anim,circleAnim,timeAnim];
 const simulation = new Simulation(allPlannedActivities);

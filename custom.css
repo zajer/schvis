@@ -43,8 +43,16 @@ html, body {
 	background: rgb(202, 60, 60);
 }
 
-#time-indicator {
+#sim-canvas-wrapper {
+	height: 100%;
+	width: 80%;
+	float: left;
+}
+
+#time-indicator-canvas-wrapper {
 	position: absolute;
+	height: 50px;
+	width: 50%;
 	top: 20px;
 	left: 450px;
 }
