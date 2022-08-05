@@ -11,22 +11,65 @@
 //	workingAnimators
 //	simulation
 //	usedCanvas = [ {cavas,wrapper} ]
+function modifyButtons( funcToApply ) {
+	let playBtn = document.getElementById("play-btn");
+	let actBtn = document.getElementById("next-act-btn");
+	let momBtn = document.getElementById("next-mnt-btn");
+	let resetBtn = document.getElementById("reset-btn");
+	[playBtn,actBtn,momBtn,resetBtn].forEach( funcToApply );
+}
+
+function lockButtons () {
+	modifyButtons( btn => { btn.classList.add("pure-button-disabled"); } );
+}
+
+function unlockButtons () {
+	modifyButtons( btn => { btn.classList.remove("pure-button-disabled"); } );
+}
 
 const simEngine = {
 	reqSimProgressByActivity : () => {
-		console.log("Begining the simulation progress opertation");
+		lockButtons();
 		simulation.state = SimState.UnsetNotChanged;
 		let advanceSim = () => {
-			console.log("Animations are switched to transitional, modyfing the the simulation state");
+			console.log("All animators have switch to transitional animations, proceeding to modyfing a simulation state");
 			simulation.state = SimState.UnsetChanging;
 			progressSimByAct(simulation);
 			simulation.state = SimState.Set;
-			console.log("Simulation objects modyfied going back to dynamic animations");
+			console.log("The simulation state has been changed, going back to dynamic animations");
+			animEngine.reqSwitchToDynamicAnims();
+			unlockButtons();
+		};
+		animEngine.reqSwitchToTransAnims(advanceSim);
+	},
+	reqSimProgressByMoment : () => {
+		lockButtons();
+		simulation.state = SimState.UnsetNotChanged;
+		let advanceSim = () => {
+			console.log("All animators have switch to transitional animations, proceeding to modyfing a simulation state");
+			simulation.state = SimState.UnsetChanging;
+			progressSimByMoment(simulation, 
+				() => {
+					console.log("The simulation state has been changed by started activities");
+					simulation.state = SimState.UnsetNotChanged;
+					animEngine.reqSwitchToDynamicAnims();
+					console.log("Requested switching to dynamic animations, waiting before going back to transitional animations and finishing activities");
+					return new Promise( resolve => {
+						setTimeout( animEngine.reqSwitchToTransAnims, 1000, resolve); 
+					});
+				},
+				() => {
+					simulation.state = SimState.Set;
+					console.log("The Simulation state has been changed by finishing activities, going back to dynamic animations");
+					animEngine.reqSwitchToDynamicAnims();
+					unlockButtons();
+				}
+			);
+			//console.log("...Simulation state has been changed, going back to dynamic animations");
 			animEngine.reqSwitchToDynamicAnims();
 		};
 		animEngine.reqSwitchToTransAnims(advanceSim);
 	},
-	reqSimProgressByMoment : () => {},
 	reqSimReset : () => {},
 	reqSimPlay : () => {},
 };
@@ -58,6 +101,14 @@ const animEngine = {
 			pair.canvas.getContext('2d').clearRect(0, 0, width, height);
 		});
 		workingAnimators.forEach( animator => { animator.drawPartOfAFrame(); } );
+		
+		let timeIndicatorCanvas = document.getElementById("time-indicator");
+		let timeCtx = timeIndicatorCanvas.getContext("2d");
+		timeCtx.clearRect(0, 0, 300, 100);
+		timeCtx.font = "30px Arial";
+		timeCtx.strokeStyle = "blue";
+		timeCtx.strokeText("Current time: "+ simulation.time, 10, 30);
+		
 		window.requestAnimationFrame(animEngine.animate);
 	}
 };

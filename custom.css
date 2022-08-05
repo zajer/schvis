@@ -6,8 +6,6 @@ html, body {
 
 #simulation {
 	border: 1px solid #000000;
-	
-	
 }
 
 .sim-btn {
@@ -43,4 +41,10 @@ html, body {
 	top: 20px;
 	left: 351px;
 	background: rgb(202, 60, 60);
+}
+
+#time-indicator {
+	position: absolute;
+	top: 20px;
+	left: 450px;
 }
