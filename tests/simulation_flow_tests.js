@@ -22,7 +22,7 @@ describe('progressSimByMoment', () => {
 		sim.scheduledActivities = [launchedAct1,launchedAct2,keptNotLaunchedAct];
 		sim.ongoingActivities = [alreadyLaunchedAct];
 		
-		await progressSimByMoment(sim, () => { return; });  
+		await progressSimByMoment(sim, () => { return; }, () => { return; });  
 		
 		chai.assert.lengthOf(sim.scheduledActivities, 1);
 		chai.assert.lengthOf(sim.ongoingActivities, 3);
@@ -40,7 +40,7 @@ describe('progressSimByMoment', () => {
 		sim.ongoingActivities = [finishedAct1,finishedAct2,keptGoingAct];
 		
 
-		await progressSimByMoment(sim, () => { return;});  
+		await progressSimByMoment(sim, () => { return;}, () => { return; });  
 		
 		chai.assert.lengthOf(sim.scheduledActivities, 1);
 		chai.assert.lengthOf(sim.ongoingActivities, 1);
@@ -59,7 +59,7 @@ describe('progressSimByMoment', () => {
 		sim.scheduledActivities = [launchedAct1,launchedAct2,keptNotLaunchedAct];
 		sim.ongoingActivities = [finishedAct1,finishedAct2,keptGoingAct];
 
-		await progressSimByMoment(sim, () => { return; });  
+		await progressSimByMoment(sim, () => { return; }, () => { return; });  
 		
 		chai.assert.lengthOf(sim.scheduledActivities, 1);
 		chai.assert.lengthOf(sim.ongoingActivities, 2);

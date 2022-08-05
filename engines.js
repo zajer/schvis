@@ -113,4 +113,4 @@ const animEngine = {
 	}
 };
 
-animEngine.animate();
+//animEngine.animate();
