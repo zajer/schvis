@@ -49,25 +49,44 @@ function progressSimByAct(simulation){
 	//simulation.state = SimState.Set;
 }
 
-async function progressSimByMoment(simulation, callMeAndWaitBeforeFinishingActs){
-	let firstFutureActivity = simulation.scheduledActivities.findIndex ( (act) => { return act.start > simulation.time; });
-	
-	if (firstFutureActivity == -1) // no activities scheduled for neither now nor later = no more activities
-		return;
-	else  if (  firstFutureActivity == 0) // all activities are scheduled for lated = no activities scheduled for now
+async function progressSimByMoment(simulation, callMeAndWaitBeforeFinishingActs, callMeAfterFinishingActs){
+	if (simulation.scheduledActivities.length == 0) {
 		finishAllActsEndingAtCurrentTime(simulation);
-	else { // activities scheduled for now
-		let currentActivities = simulation.scheduledActivities.slice( 0, firstFutureActivity );
-		simulation.scheduledActivities.splice (0, firstFutureActivity);
-		currentActivities.forEach( (act) => { startActivity(act); } );
-		simulation.ongoingActivities = simulation.ongoingActivities.concat(currentActivities);
-		simulation.state = SimState.Set; //przeniesc zmiane statusu symulacji do funkcji wyższego rzędu
-		
-		await callMeAndWaitBeforeFinishingActs();
-		
-		finishAllActsEndingAtCurrentTime(simulation);
+		simulation.time++;
+		callMeAfterFinishingActs();
 	}
-	
+	else {
+		let firstFutureActivity = simulation.scheduledActivities.findIndex ( act => { return act.start > simulation.time; });
+		
+		if (firstFutureActivity == -1) {// no activities scheduled for later = first activity is scheduled for now
+			let currentActivities = simulation.scheduledActivities;
+			simulation.scheduledActivities = [];
+			currentActivities.forEach( (act) => { startActivity(act); } );
+			simulation.ongoingActivities = simulation.ongoingActivities.concat(currentActivities);
+			
+			await callMeAndWaitBeforeFinishingActs();
+			
+			finishAllActsEndingAtCurrentTime(simulation);
+		}
+		else  if (  firstFutureActivity == 0) { // all activities are scheduled for later = no activities scheduled for now
+			finishAllActsEndingAtCurrentTime(simulation);
+		}
+		else { // some activities scheduled for now
+			let currentActivities = simulation.scheduledActivities.slice( 0, firstFutureActivity );
+			simulation.scheduledActivities.splice (0, firstFutureActivity);
+			currentActivities.forEach( (act) => { startActivity(act); } );
+			simulation.ongoingActivities = simulation.ongoingActivities.concat(currentActivities);
+			//simulation.state = SimState.Set; //przeniesc zmiane statusu symulacji do funkcji wyższego rzędu
+			
+			await callMeAndWaitBeforeFinishingActs();
+			
+			finishAllActsEndingAtCurrentTime(simulation);
+			//simulation.time++;
+			//callMeAfterFinishingActs();
+		}
+		simulation.time++;
+		callMeAfterFinishingActs();
+	}
 	//rozpocznij wszystkie czynności zaplanowane na aktualny moment czasu
 	//przenies rozpoczete czynnosci do odpowiedniej tablicy
 	//ustaw stany symulacji na ustalony
