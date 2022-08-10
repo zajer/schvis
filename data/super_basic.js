@@ -1,13 +1,10 @@
 // Three squares with a circle moving from first to last.
-let obj1 = { id:1, pos:1, color:"orange", shape:"circle" };
-let obj2 = { id:2, pos:1, color:"blue", shape:"square" };
-let obj3 = { id:3, pos:2, color:"red", shape:"square" };
-let obj4 = { id:4, pos:3, color:"green", shape:"square" };
+let obj0 = { id:0, pos:1, color:"orange", shape:"circle" };
+let obj1 = { id:1, pos:1, color:"blue", shape:"square" };
+let obj2 = { id:2, pos:2, color:"red", shape:"square" };
+let obj3 = { id:3, pos:3, color:"green", shape:"square" };
 
-let simObj1 = parseSimObj(obj1);
-let simObj2 = parseSimObj(obj2);
-let simObj3 = parseSimObj(obj3);
-let simObj4 = parseSimObj(obj4);
+let simObjs = [obj0,obj1,obj2,obj3].map( obj => { return parseSimObj(obj); } );
 
 // Two activity types, one for moving circle between squares and second for changing circle's color
 
@@ -60,11 +57,10 @@ let aa2 = new SimAbstActivity([aa2r0], "change color", 1);
 
 let availableAbstActs = [aa1,aa2];
 
-// TODO:konstrukcja (parsowanie) harmonogramu na podstawie typow czynnosci oraz obiektow, ktore pelnia kolejne role
 // Making activities based on their type, objects performing their role and moment they are starting
-let a1 = makeAct("move", [simObj2,simObj1,simObj3], 0);
-let a2 = makeAct("change color", [simObj1], 2);
-let a3 = makeAct("move", [simObj3,simObj1,simObj4], 3);
+let a1 = makeAct("move", [simObjs[1],simObjs[0],simObjs[2]], 0);
+let a2 = makeAct("change color", [simObjs[0]], 2);
+let a3 = makeAct("move", [simObjs[2],simObjs[0],simObjs[3]], 3);
 
 // Drawer for squares
 let drawerFunMoveSquares = (canvas, objAttrs) => {
@@ -97,7 +93,7 @@ let drawerFunMoveCircles = (canvas, objAttrs) => {
 		ctx.arc( (canvasWidth/3)*(objAttrs.get("pos")-1)+100 , canvasHeight/7+50, 25, 0, 2 * Math.PI );
 		ctx.fill();
 	}
-	if (objAttrs.get('shape' != 'circle'))
+	if (objAttrs.get('shape') != 'circle')
 		return AnimationStatus.Finished;
 	else {
 		let domRect = canvas.getBoundingClientRect();
@@ -107,7 +103,6 @@ let drawerFunMoveCircles = (canvas, objAttrs) => {
 		let ctx = canvas.getContext('2d');
 		
 		if( objAttrs.get('is_moving') == true ) {
-			//zwraca albo finished albo going w zaleznosci od etapu animacji
 			ctx.save();
 			
 			let shift = objAttrs.get('moveCirclesTMP');
@@ -150,7 +145,7 @@ let drawerFunSimTime = canvas => {
 	timeCtx.strokeText("Current time: "+ simulation.time, 10, 30);
 	timeCtx.restore();
 	return AnimationStatus.Finished;
-}
+};
 
 let timeDrawer = new Drawer( drawerFunSimTime, drawerFunSimTime );
 
@@ -158,15 +153,14 @@ let timeCanvasWrapper = document.getElementById("time-indicator-canvas-wrapper")
 let timeCanvas = document.getElementById("time-indicator");
 
 const usedCanvas = 
-	[ 
+	[
 		{wrapper:simCanvasWrapper, canvas: simCanvas}, 
 		{wrapper:timeCanvasWrapper, canvas: timeCanvas} 
 	];
-let area1Anim = new Animator(simCanvas,simObj2,[moveDrawerSquares]);
-let area2Anim = new Animator(simCanvas,simObj3,[moveDrawerSquares]);
-let area3Anim = new Animator(simCanvas,simObj4,[moveDrawerSquares]);
-let circleAnim = new Animator(simCanvas,simObj1,[moveDrawerCircles]);
-
+let area1Anim = new Animator(simCanvas,simObjs[1],[moveDrawerSquares]);
+let area2Anim = new Animator(simCanvas,simObjs[2],[moveDrawerSquares]);
+let area3Anim = new Animator(simCanvas,simObjs[3],[moveDrawerSquares]);
+let circleAnim = new Animator(simCanvas,simObjs[0],[moveDrawerCircles]);
 let timeAnim = new Animator(timeCanvas,{attributes: new Map()},[ timeDrawer ]);
 
 let allPlannedActivities = [a1,a2,a3];
