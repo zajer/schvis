@@ -1,11 +1,6 @@
 
 function SimObject(objectId, initAttrs) {
-	this.id = ( () => {
-			if ( typeof objectId  !== 'number' )
-				throw new TypeError ('objectId should be an integer');
-			else
-				return objectId;
-		}) ();	
+	this.id = objectId;	
 	this.attributes = (function () {
 			if ( ! initAttrs instanceof Map )
 				throw new TypeError ('initAttrs should be of type Map');
